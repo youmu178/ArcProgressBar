@@ -1,5 +1,7 @@
 package com.youzh.arcprogressbar;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         mArcProgressBar.setProgress((int) animation.getAnimatedValue());
+                    }
+                });
+                valueAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mArcProgressBar.setProgressDesc("已售罄");
                     }
                 });
                 valueAnimator.setDuration(5000);

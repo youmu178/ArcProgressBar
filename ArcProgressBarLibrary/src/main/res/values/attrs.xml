@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ArcProgressBar">
-        <attr name="ArcDistance" format="integer"/>
-        <attr name="ArcBgColor" format="color"/>
-        <attr name="DottedDefaultColor" format="color"/>
-        <attr name="DottedRunColor" format="color"/>
-        <attr name="text" format="string"/>
-        <attr name="DottedLineCount" format="integer"/>
-        <attr name="DottedLineWidth" format="integer"/>
-        <attr name="DottedLineHeight" format="integer"/>
-        <attr name="LineDistance" format="integer"/>
-        <attr name="ProgressMax" format="integer"/>
-        <attr name="ProgressTextSize" format="integer"/>
+        <attr name="arcDistance" format="integer"/>
+        <attr name="arcBgColor" format="color"/>
+        <attr name="dottedDefaultColor" format="color"/>
+        <attr name="dottedRunColor" format="color"/>
+        <attr name="dottedLineCount" format="integer"/>
+        <attr name="dottedLineWidth" format="integer"/>
+        <attr name="dottedLineHeight" format="integer"/>
+        <attr name="lineDistance" format="integer"/>
+        <attr name="progressMax" format="integer"/>
+        <attr name="progressTextSize" format="integer"/>
+        <attr name="progressDesc" format="string"/>
+        <attr name="arcText" format="string"/>
     </declare-styleable>
 </resources>

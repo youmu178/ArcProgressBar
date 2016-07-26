@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.view.WindowManager;
  * Created by youzehong on 16/4/19.
  */
 public class ArcProgressBar extends View {
-    private final String TAG = "youzh";
 
     private Paint mArcPaint;
     private Paint mTextPaint;
@@ -32,15 +32,15 @@ public class ArcProgressBar extends View {
     /**
      * 圆弧颜色
      */
-    private int mArcBgColor = 0xFF916D;
+    private int mArcBgColor = 0xFFFF916D;
     /**
      * 虚线默认颜色
      */
-    private String mDottedDefaultColor = "#8D99A1";
+    private int mDottedDefaultColor = 0xFF8D99A1;
     /**
      * 虚线变动颜色
      */
-    private String mDottedRunColor = "#f0724f";
+    private int mDottedRunColor = 0xFFf0724f;
     /**
      * 圆弧两边的距离
      */
@@ -48,7 +48,7 @@ public class ArcProgressBar extends View {
     /**
      * 底部默认文字
      */
-    private String text = "限时优惠";
+   private String mArcText= "";
     /**
      * 线条数
      */
@@ -72,7 +72,11 @@ public class ArcProgressBar extends View {
     /**
      * 进度文字大小
      */
-    private int mProgressTextSize = 80;
+    private int mProgressTextSize = 65;
+    /**
+     * 进度描述
+     */
+    private String mProgressDesc;
 
     private int mScressWidth;
     private int mProgress;
@@ -101,11 +105,23 @@ public class ArcProgressBar extends View {
 
     private void intiAttributes(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ArcProgressBar);
-        mPdDistance = a.getInteger(R.styleable.ArcProgressBar_ArcDistance, mPdDistance);
-        mArcBgColor = a.getColor(R.styleable.ArcProgressBar_ArcBgColor, mArcBgColor);
+        mPdDistance = a.getInteger(R.styleable.ArcProgressBar_arcDistance, mPdDistance);
+        mArcBgColor = a.getColor(R.styleable.ArcProgressBar_arcBgColor, mArcBgColor);
+        mDottedDefaultColor = a.getColor(R.styleable.ArcProgressBar_dottedDefaultColor, mDottedDefaultColor);
+        mDottedRunColor = a.getColor(R.styleable.ArcProgressBar_dottedRunColor, mDottedRunColor);
+        mDottedLineCount = a.getInteger(R.styleable.ArcProgressBar_dottedLineCount, mDottedLineCount);
+        mDottedLineWidth = a.getInteger(R.styleable.ArcProgressBar_dottedLineWidth, mDottedLineWidth);
+        mDottedLineHeight = a.getInteger(R.styleable.ArcProgressBar_dottedLineHeight, mDottedLineHeight);
+        mLineDistance = a.getInteger(R.styleable.ArcProgressBar_lineDistance, mLineDistance);
+        mProgressMax = a.getInteger(R.styleable.ArcProgressBar_progressMax, mProgressMax);
+        mProgressTextSize = a.getInteger(R.styleable.ArcProgressBar_progressTextSize, mProgressTextSize);
+        mProgressDesc = a.getString(R.styleable.ArcProgressBar_progressDesc);
+        mArcText = a.getString(R.styleable.ArcProgressBar_arcText);
+        if (TextUtils.isEmpty(mArcText)) {
+            mArcText= "限时特卖";
+        }
         a.recycle();
     }
-
 
     private void initView() {
         int[] screenWH = getScreenWH();
@@ -126,16 +142,16 @@ public class ArcProgressBar extends View {
         mDottedLinePaint = new Paint();
         mDottedLinePaint.setAntiAlias(true);
         mDottedLinePaint.setStrokeWidth(mDottedLineHeight);
-        mDottedLinePaint.setColor(Color.parseColor(mDottedDefaultColor));
+        mDottedLinePaint.setColor(mDottedDefaultColor);
         //
         mRonudRectPaint = new Paint();
         mRonudRectPaint.setAntiAlias(true);
-        mRonudRectPaint.setColor(Color.parseColor(mDottedRunColor));
+        mRonudRectPaint.setColor(mDottedRunColor);
         mRonudRectPaint.setStyle(Paint.Style.FILL);
         // 中间进度画笔
         mProgressPaint = new Paint();
         mProgressPaint.setAntiAlias(true);
-        mProgressPaint.setColor(Color.parseColor(mDottedRunColor));
+        mProgressPaint.setColor(mDottedRunColor);
         mProgressPaint.setTextSize(dp2px(getResources(), mProgressTextSize));
     }
 
@@ -184,7 +200,7 @@ public class ArcProgressBar extends View {
 
         canvas.drawRoundRect(mRountRect, 100, 100, mRonudRectPaint);
 
-        canvas.drawText(text, mArcRadius - mTextPaint.measureText(text) / 2,
+        canvas.drawText(mArcText, mArcRadius - mTextPaint.measureText(mArcText) / 2,
                 (float) (mArcRadius + bDistance) - 2 * (mTextPaint.descent() + mTextPaint.ascent()), mTextPaint);
 //        Log.i(TAG, (float) (mArcRadius + bDistance) - 2 * (mTextPaint.descent() + mTextPaint.ascent()) + "");
 
@@ -198,6 +214,9 @@ public class ArcProgressBar extends View {
 
     private void drawRunText(Canvas canvas) {
         String progressStr = this.mRealProgress + "%";
+        if (!TextUtils.isEmpty(mProgressDesc)) {
+            progressStr = mProgressDesc;
+        }
         canvas.drawText(progressStr, mArcCenterX - mProgressPaint.measureText(progressStr) / 2,
                 mArcCenterX - (mProgressPaint.descent() + mProgressPaint.ascent()) / 2 - 20, mProgressPaint);
     }
@@ -205,13 +224,34 @@ public class ArcProgressBar extends View {
     public void restart() {
         isRestart = true;
         this.mRealProgress = 0;
+        this.mProgressDesc = "";
         invalidate();
     }
 
-    private void setMaxProgress(int max) {
+    /**
+     * 设置中间进度描述
+     *
+     * @param desc
+     */
+    public void setProgressDesc(String desc) {
+        this.mProgressDesc = desc;
+        postInvalidate();
+    }
+
+    /**
+     * 设置最大进度
+     *
+     * @param max
+     */
+    public void setMaxProgress(int max) {
         this.mProgressMax = max;
     }
 
+    /**
+     * 设置当前进度
+     *
+     * @param progress
+     */
     public void setProgress(int progress) {
         // 进度100% = 控件的75%
         this.mRealProgress = progress;
@@ -221,7 +261,7 @@ public class ArcProgressBar extends View {
     }
 
     private void drawRunDottedLineArc(Canvas canvas) {
-        mDottedLinePaint.setColor(Color.parseColor(mDottedRunColor));
+        mDottedLinePaint.setColor(mDottedRunColor);
         float evenryDegrees = (float) (2.0f * Math.PI / mDottedLineCount);
 
         float startDegress = (float) (225 * Math.PI / 180) + evenryDegrees / 2;
@@ -240,13 +280,12 @@ public class ArcProgressBar extends View {
     }
 
     private void drawDottedLineArc(Canvas canvas) {
-        mDottedLinePaint.setColor(Color.parseColor(mDottedDefaultColor));
+        mDottedLinePaint.setColor(mDottedDefaultColor);
         // 360 * Math.PI / 180
         float evenryDegrees = (float) (2.0f * Math.PI / mDottedLineCount);
 
         float startDegress = (float) (135 * Math.PI / 180);
         float endDegress = (float) (225 * Math.PI / 180);
-
 
         for (int i = 0; i < mDottedLineCount; i++) {
             float degrees = i * evenryDegrees;
