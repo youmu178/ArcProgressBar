@@ -3,12 +3,11 @@
 ##DEMO
 ![](https://raw.githubusercontent.com/youmu178/ArcProgressBar/master/arcprogressbar.gif)
 ```xml
- <com.youzh.ArcProgressBar
+<com.youzh.ArcProgressBar
         android:id="@+id/arcProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
+        android:layout_centerInParent="true"/>
 ```
 ###Attributes
 |name|format|description|
